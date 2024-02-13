@@ -1,60 +1,146 @@
-const Header = (props) => {
-  return <h1>{props.course}</h1>;
-};
+// const Header = ({ course }) => <h1>{course}</h1>;
 
-const Content = (props) => {
-  // console.log(props.parts[0])
+
+// const Content = (props) => {
+//   return (
+//     <div>
+//       <Part part={props.parts[0]}/>
+//       <Part part={props.parts[1]}/>
+//       <Part part={props.parts[2]}/>
+//     </div>
+//   );
+// };
+
+// const Part = (props) => {
+//   return (
+//     <p>
+//       {props.part.name} {props.part.exercises}
+//     </p> 
+//   )
+// }
+
+// const Total = ({ exercises }) => {
+//   const total = exercises.reduce((sum, part) => sum + part.exercises, 0);
+//   return <p>Number of exercises {total}</p>;
+// };
+
+// const App = () => {
+//   const course = {
+//     name: 'Half Stack application development',
+//     parts: [
+//       {
+//         name: 'Fundamentals of React',
+//         exercises: 10
+//       },
+//       {
+//         name: 'Using props to pass data',
+//         exercises: 7
+//       },
+//       {
+//         name: 'State of a component',
+//         exercises: 14
+//       }
+//     ]
+//   }
+
+//   return (
+//     <div>
+//       <Header course={course.name} />
+//       <Content parts={course.parts}/>
+//       <Total exercises={course.parts}/>
+//     </div>
+//   );
+// };
+
+// export default App;
+
+// import { useReducer, useState } from 'react'
+
+// const History = (props) => {
+//   if (props.allClicks.length === 0) {
+//     return (
+//       <div>
+//         the app is used by pressing the buttons
+//       </div>
+//     )
+//   }
+//   return (
+//     <div>
+//       button press history: {props.allClicks.join(' ')}
+//     </div>
+//   )
+// }
+
+// const Button = ({ handleClick, text }) => (
+//   <button onClick={handleClick}>
+//     {text}
+//   </button>
+// )
+
+// const App = () => {
+//   const [left, setLeft] = useState(0)
+//   const [right, setRight] = useState(0)
+//   const [allClicks, setAll] = useState([])
+
+//   const handleLeftClick = () => {
+//     setAll(allClicks.concat('L'))
+//     const updatedLeft = left + 1
+//     setLeft(updatedLeft)
+//     setTotal(left + right)
+//   }
+
+//   const handleRightClick = () => {
+//     setAll(allClicks.concat('R'))
+//     const updatedRight = right + 1
+//     setRight(updatedRight)
+//     setTotal(left + updatedRight)
+//   }
+
+//   return (
+//     <div>
+//       {left}
+//       <Button handleClick={handleLeftClick} text='left' />
+//       <Button handleClick={handleRightClick} text='right' />
+//       {right}
+//       <History allClicks={allClicks}/>
+//     </div>
+//   )
+// }
+
+// export default App
+
+
+import { useState } from "react"
+
+const Display = props => <div>{props.value}</div>
+
+const Button = (props) => (
+  <button onClick={props.handleClick}>
+    {props.text}
+  </button>
+)
+
+const App = () => {
+  const [value, setValue] = useState(10)
+  
+  // const setToValue = (newValue) => () => {
+  //   console.log('value now', newValue)  // print the new value to console
+  //   setValue(newValue)
+  // }
+
+  const setToValue = (newValue) => {
+    console.log('value now', newValue)
+    setValue(newValue)
+  }
+  
   return (
     <div>
-      <Part part={props.parts[0]}/>
-      <Part part={props.parts[1]}/>
-      <Part part={props.parts[2]}/>
+      <Display value={value} />
+      <Button handleClick={() => setToValue(1000)} text="thousand" />
+      <Button handleClick={() => setToValue(0)} text="reset" />
+      <Button handleClick={() => setToValue(value + 1)} text="increment" />
     </div>
-  );
-};
-
-const Part = (props) => {
-  console.log(props.part)
-  return (
-    <p>
-      {props.part.name} {props.part.exercises}
-    </p> 
   )
 }
 
-
-const Total = (props) => {
-  return <p>Number of exercises {props.exercises[0].exercises + props.exercises[1].exercises + props.exercises[2].exercises}</p>;
-};
-
-const App = () => {
-  const course = {
-    name: 'Half Stack application development',
-    parts: [
-      {
-        name: 'Fundamentals of React',
-        exercises: 10
-      },
-      {
-        name: 'Using props to pass data',
-        exercises: 7
-      },
-      {
-        name: 'State of a component',
-        exercises: 14
-      }
-    ]
-  }
-
-  const partsArr = [course.parts[0], course.parts[1], course.parts[2]]
-
-  return (
-    <div>
-      <Header course={course.name} />
-      <Content parts={partsArr}/>
-      <Total exercises={partsArr}/>
-    </div>
-  );
-};
-
-export default App;
+export default App
