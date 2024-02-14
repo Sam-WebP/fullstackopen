@@ -109,38 +109,92 @@
 
 // export default App
 
+/////////////
+// import { useState } from "react"
+
+// const Display = props => <div>{props.value}</div>
+
+// const Button = (props) => (
+//   <button onClick={props.handleClick}>
+//     {props.text}
+//   </button>
+// )
+
+// const App = () => {
+//   const [value, setValue] = useState(10)
+  
+//   // const setToValue = (newValue) => () => {
+//   //   console.log('value now', newValue)  // print the new value to console
+//   //   setValue(newValue)
+//   // }
+
+//   const setToValue = (newValue) => {
+//     console.log('value now', newValue)
+//     setValue(newValue)
+//   }
+  
+//   return (
+//     <div>
+//       <Display value={value} />
+//       <Button handleClick={() => setToValue(1000)} text="thousand" />
+//       <Button handleClick={() => setToValue(0)} text="reset" />
+//       <Button handleClick={() => setToValue(value + 1)} text="increment" />
+//     </div>
+//   )
+// }
+
+// export default App
 
 import { useState } from "react"
 
-const Display = props => <div>{props.value}</div>
+const Button = ({ handleClick, text }) => (
 
-const Button = (props) => (
-  <button onClick={props.handleClick}>
-    {props.text}
+  <button onClick={handleClick}>
+    {text}
   </button>
 )
 
 const App = () => {
-  const [value, setValue] = useState(10)
-  
-  // const setToValue = (newValue) => () => {
-  //   console.log('value now', newValue)  // print the new value to console
-  //   setValue(newValue)
-  // }
 
-  const setToValue = (newValue) => {
-    console.log('value now', newValue)
-    setValue(newValue)
-  }
+const [goodValue, setGood] = useState(0)
+const [neutralValue, setNeutral] = useState(0)
+const [badValue, setBad] = useState(0)
+
+const handleGood = () => {
+  const updatedValue = goodValue + 1
+  setGood(updatedValue) 
+}
+
+const handleNeutral = () => {
+  console.log("before neutral", neutralValue)
+  const updatedValue = neutralValue + 1
+  setNeutral(updatedValue) 
+  console.log("after neutral", neutralValue)
+}
+
+const handleBad = () => {
+  const updatedValue = badValue + 1
+  setBad(updatedValue) 
+}
+
+return (
+  <div>
+    <h1>give feedback</h1>
+
+    <Button handleClick={handleGood} text="good"/>
+    <Button handleClick={handleNeutral} text="neutral"/>
+    <Button handleClick={handleBad} text="bad"/>
+
+    <h1>statistics</h1>
+    <div>Good {goodValue}</div>
+    <div>Neutral {neutralValue}</div>
+    <div>bad {badValue}</div>
+
+  </div>
   
-  return (
-    <div>
-      <Display value={value} />
-      <Button handleClick={() => setToValue(1000)} text="thousand" />
-      <Button handleClick={() => setToValue(0)} text="reset" />
-      <Button handleClick={() => setToValue(value + 1)} text="increment" />
-    </div>
-  )
+)
+
+
 }
 
 export default App
