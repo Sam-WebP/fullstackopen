@@ -147,22 +147,41 @@
 
 import { useState } from "react"
 
-const Button = ({ handleClick, text }) => (
+const Button = ({ handleClick, text, trackAverage}) => (
 
   <button onClick={handleClick}>
     {text}
   </button>
 )
 
+const HandleAverage = (averageValue) => {
+  return (
+    <div>
+      average {averageValue}
+    </div>
+  )
+}
+
 const App = () => {
 
 const [goodValue, setGood] = useState(0)
 const [neutralValue, setNeutral] = useState(0)
 const [badValue, setBad] = useState(0)
+const [averageValue, setAverage] = useState(0)
+const [totalValue, setTotal] = useState(0)
+
+
+//NOTE: Handle total isn't currently working because when the function is called, it is not using the most updated version until the next refresh
+const handleTotal = () => {
+  const updatedValue = goodValue + neutralValue + badValue
+  setTotal(updatedValue)
+}
 
 const handleGood = () => {
   const updatedValue = goodValue + 1
-  setGood(updatedValue) 
+  setGood(updatedValue)
+  handleAverage()
+  handleTotal()
 }
 
 const handleNeutral = () => {
@@ -170,11 +189,26 @@ const handleNeutral = () => {
   const updatedValue = neutralValue + 1
   setNeutral(updatedValue) 
   console.log("after neutral", neutralValue)
+  handleAverage()
+  handleTotal()
 }
 
 const handleBad = () => {
   const updatedValue = badValue + 1
-  setBad(updatedValue) 
+  setBad(updatedValue)
+  handleAverage()
+  handleTotal()
+}
+
+const handleAverage = () => {
+  if (badValue > 0) {
+    const averageMetric = totalValue + (badValue * -1) / total
+    setAverage(averageMetric)
+  } else {
+    const averageMetric = goodValue / totalValue
+    setAverage(averageMetric)
+  }
+  
 }
 
 return (
@@ -189,12 +223,12 @@ return (
     <div>Good {goodValue}</div>
     <div>Neutral {neutralValue}</div>
     <div>bad {badValue}</div>
+    <div>all {totalValue}</div>
+    <div>average {averageValue}</div>
 
   </div>
   
 )
-
-
 }
 
 export default App
