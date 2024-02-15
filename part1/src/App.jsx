@@ -145,90 +145,121 @@
 
 // export default App
 
-import { useState } from "react"
+///////////////////////////////////////////////////////
 
-const Button = ({ handleClick, text, trackAverage}) => (
+// import { useState } from "react"
 
+// const Button = ({ handleClick, text}) => (
+
+//   <button onClick={handleClick}>
+//     {text}
+//   </button>
+// )
+
+// const App = () => {
+
+// const [goodValue, setGood] = useState(0)
+// const [neutralValue, setNeutral] = useState(0)
+// const [badValue, setBad] = useState(0)
+// const [averageValue, setAverage] = useState(0)
+// const [totalValue, setTotal] = useState(0)
+// const [positiveValue, setPositive] = useState(0)
+
+// const handleGood = () => {
+//   const updatedValue = goodValue + 1
+//   setGood(updatedValue)
+//   const total = updatedValue + neutralValue + badValue
+//   setTotal(total)
+//   setAverage(((updatedValue + (badValue * -1)) / total))
+//   setPositive((updatedValue/total) * 100)
+// }
+
+// const handleNeutral = () => {
+//   const updatedValue = neutralValue + 1
+//   setNeutral(updatedValue) 
+//   const total = goodValue + updatedValue + badValue
+//   setTotal(total)
+//   setAverage(((goodValue + (badValue * -1)) / total))
+//   setPositive((goodValue/total) * 100)
+// }
+
+// const handleBad = () => {
+//   const updatedValue = badValue + 1
+//   setBad(updatedValue)
+//   const total = goodValue + neutralValue + updatedValue
+//   setTotal(total)
+//   setAverage(((goodValue + (updatedValue * -1)) / total))
+//   setPositive((goodValue/total) * 100)
+// }
+
+// return (
+//   <div>
+//     <h1>give feedback</h1>
+
+//     <Button handleClick={handleGood} text="good"/>
+//     <Button handleClick={handleNeutral} text="neutral"/>
+//     <Button handleClick={handleBad} text="bad"/>
+
+//     <h1>statistics</h1>
+//     <div>Good {goodValue}</div>
+//     <div>Neutral {neutralValue}</div>
+//     <div>bad {badValue}</div>
+//     <div>all {totalValue}</div>
+//     <div>average {averageValue}</div>
+//     <div>positive {positiveValue} %</div>
+
+//   </div>
+  
+// )
+// }
+
+// export default App
+
+import React, { useState } from 'react'
+
+const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>
     {text}
   </button>
 )
 
-const HandleAverage = (averageValue) => {
+const App = () => {
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
+
+  const handleGood = () => {
+    setGood(good => good + 1)
+  }
+
+  const handleNeutral = () => {
+    setNeutral(neutral => neutral + 1)
+  }
+
+  const handleBad = () => {
+    setBad(bad => bad + 1)
+  }
+
+  const total = good + neutral + bad
+  const average = total === 0 ? 0 : ((good - bad) / total).toFixed(2)
+  const positive = total === 0 ? 0 : ((good / total) * 100).toFixed(1)
+
   return (
     <div>
-      average {averageValue}
+      <h1>give feedback</h1>
+      <Button handleClick={handleGood} text="good" />
+      <Button handleClick={handleNeutral} text="neutral" />
+      <Button handleClick={handleBad} text="bad" />
+
+      <h1>statistics</h1>
+      <div>Good {good}</div>
+      <div>Neutral {neutral}</div>
+      <div>Bad {bad}</div>
+      <div>All {total}</div>
+      <div>Average {average}</div>
+      <div>Positive {positive} %</div>
     </div>
   )
-}
-
-const App = () => {
-
-const [goodValue, setGood] = useState(0)
-const [neutralValue, setNeutral] = useState(0)
-const [badValue, setBad] = useState(0)
-const [averageValue, setAverage] = useState(0)
-const [totalValue, setTotal] = useState(0)
-
-
-//NOTE: Handle total isn't currently working because when the function is called, it is not using the most updated version until the next refresh
-const handleTotal = () => {
-  const updatedValue = goodValue + neutralValue + badValue
-  setTotal(updatedValue)
-}
-
-const handleGood = () => {
-  const updatedValue = goodValue + 1
-  setGood(updatedValue)
-  handleAverage()
-  handleTotal()
-}
-
-const handleNeutral = () => {
-  console.log("before neutral", neutralValue)
-  const updatedValue = neutralValue + 1
-  setNeutral(updatedValue) 
-  console.log("after neutral", neutralValue)
-  handleAverage()
-  handleTotal()
-}
-
-const handleBad = () => {
-  const updatedValue = badValue + 1
-  setBad(updatedValue)
-  handleAverage()
-  handleTotal()
-}
-
-const handleAverage = () => {
-  if (badValue > 0) {
-    const averageMetric = totalValue + (badValue * -1) / total
-    setAverage(averageMetric)
-  } else {
-    const averageMetric = goodValue / totalValue
-    setAverage(averageMetric)
-  }
-  
-}
-
-return (
-  <div>
-    <h1>give feedback</h1>
-
-    <Button handleClick={handleGood} text="good"/>
-    <Button handleClick={handleNeutral} text="neutral"/>
-    <Button handleClick={handleBad} text="bad"/>
-
-    <h1>statistics</h1>
-    <div>Good {goodValue}</div>
-    <div>Neutral {neutralValue}</div>
-    <div>bad {badValue}</div>
-    <div>all {totalValue}</div>
-    <div>average {averageValue}</div>
-
-  </div>
-  
-)
 }
 
 export default App
