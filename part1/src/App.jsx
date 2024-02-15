@@ -231,24 +231,31 @@ const Statistics = ({ good, neutral, bad }) => {
   }
 
   const average = ((good - bad) / total).toFixed(2)
-  const positive = ((good / total) * 100).toFixed(1)
+  const positive = ((good / total) * 100).toFixed(1) + "%"
   
   return (
-    <div>
+    <>
       <h1>statistics</h1>
-      <StatisticLine text="Good" value={good}/>
-      <StatisticLine text="Neutral" value={neutral}/>
-      <StatisticLine text="Bad" value={bad}/>
-      <StatisticLine text="All" value={total}/>
-      <StatisticLine text="Average" value={average}/>
-      <StatisticLine text="Positive" value={positive}/>
-    </div>
+      <table>
+        <tbody>
+          <StatisticLine text="Good" value={good}/>
+          <StatisticLine text="Neutral" value={neutral}/>
+          <StatisticLine text="Bad" value={bad}/>
+          <StatisticLine text="All" value={total}/>
+          <StatisticLine text="Average" value={average}/>
+          <StatisticLine text="Positive" value={positive}/>
+        </tbody>
+      </table>
+    </>
   )
 }
 
 const StatisticLine = ({ text, value }) => (
   <>
-    <div>{text} {value}</div>
+    <tr>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
   </>
 ) 
 
