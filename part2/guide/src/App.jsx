@@ -1,25 +1,3 @@
-// import Note from "./components/Note"
-
-// ./components/Note
- 
-//  const App = ({ notes }) => {
-
-//   // const Note = ({ note }) => <li>{note.content}</li>
-  
-//   return (
-//     <div>
-//       <h1>Notes</h1>
-//       <ul>
-//         {notes.map(Note => 
-//           <Note key={note.id} note={note}/>
-//         )}
-//       </ul>
-//     </div>
-//   )
-// }
-
-// export default App
-
 import Course from "./components/Course"
 
 const App = () => {
@@ -69,7 +47,9 @@ const App = () => {
   ]
 
   return (
-    <Course courses={courses} />
+    <>
+      {courses.map(course => <Course key={course.id} course={course} />)}
+    </>
   )
 }
 
