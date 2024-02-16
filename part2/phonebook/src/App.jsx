@@ -3,7 +3,7 @@ import { useState } from 'react'
 const DisplayPersons = ({ persons }) => {
   console.log('The persons looks like this', persons)
   return (
-    <div>{persons.map(person => <div>{person.name}</div>)}</div>
+    <div>{persons.map(person => <div key={person.name}>{person.name}</div>)}</div>
   )
 }
 
@@ -15,11 +15,22 @@ const App = () => {
 
   const newPerson = (e) => {
     e.preventDefault()
+    if (alertExisting()) {
+      setNewName('')
+      return
+    }
     const personObject = {
       name: newName,
     }
     setPersons(persons.concat(personObject))
     setNewName('')
+  }
+
+  const alertExisting = () => {
+    if (persons.map(person => person.name).includes(newName)) {
+      window.alert(`${newName} is already added to phonebook`)
+      return true
+    }
   }
 
   const handlePersonChange = (e) => {
