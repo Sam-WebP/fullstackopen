@@ -1,11 +1,13 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react'
+import personService from '/root/repos/fullstackopen/part2/phonebook/src/services/persons'
 
 const Filter = ({ onChange }) => (
   <div>
     filter shown with
     <input onChange={onChange} />
   </div>
-);
+)
 
 const PersonForm = ({ newName, newNumber, onNameChange, onNumberChange, onSubmit }) => (
   <form onSubmit={onSubmit}>
@@ -21,7 +23,7 @@ const PersonForm = ({ newName, newNumber, onNameChange, onNumberChange, onSubmit
       <button type="submit">add</button>
     </div>
   </form>
-);
+)
 
 const Persons = ({ persons }) => (
   <div>
@@ -31,50 +33,58 @@ const Persons = ({ persons }) => (
       </div>
     ))}
   </div>
-);
+)
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 },
-  ]);
-  const [newName, setNewName] = useState('');
-  const [newNumber, setNewNumber] = useState('');
-  const [filteredPersons, setFilteredPersons] = useState(persons);
+  const [persons, setPersons] = useState([])
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+  const [filteredPersons, setFilteredPersons] = useState(persons)
+
+  useEffect(() => {
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setFilteredPersons(initialPersons)
+        setPersons(initialPersons)
+      })
+  }, [])
 
   const newPerson = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     if (alertExisting()) return
 
     const personObject = {
       name: newName,
       number: newNumber,
       id: persons.length + 1,
-    };
-    setPersons(persons.concat(personObject));
-    setFilteredPersons(persons.concat(personObject));
-    setNewName('');
-    setNewNumber('');
-  };
+    }
+    
+    personService
+      .create(personObject)
+      .then(createdPerson => {
+        setFilteredPersons(filteredPersons.concat(createdPerson))
+        setNewName('')
+        setNewNumber('')
+      })
+  }
 
   const alertExisting = () => {
     if (persons.some(person => person.name === newName)) {
-      window.alert(`${newName} is already added to phonebook`);
-      return true;
+      window.alert(`${newName} is already added to phonebook`)
+      return true
     }
-    return false;
-  };
-
-  const handleNameChange = (e) => setNewName(e.target.value);
-  const handleNumberChange = (e) => setNewNumber(e.target.value);
+    return false
+  }
 
   const nameFilter = (e) => {
-    const searchTerm = e.target.value.toLowerCase();
-    const filtered = persons.filter(person => person.name.toLowerCase().includes(searchTerm));
-    setFilteredPersons(filtered);
-  };
+    const searchTerm = e.target.value.toLowerCase()
+    const filtered = persons.filter(person => {
+      return person.name.toLowerCase().includes(searchTerm)
+    })
+    
+    setFilteredPersons(filtered)
+  }
 
   return (
     <div>
@@ -84,14 +94,14 @@ const App = () => {
       <PersonForm
         newName={newName}
         newNumber={newNumber}
-        onNameChange={handleNameChange}
-        onNumberChange={handleNumberChange}
+        onNameChange={(e) => setNewName(e.target.value)}
+        onNumberChange={(e) => setNewNumber(e.target.value)}
         onSubmit={newPerson}
       />
       <h3>Numbers</h3>
       <Persons persons={filteredPersons} />
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
