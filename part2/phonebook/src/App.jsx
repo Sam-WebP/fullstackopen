@@ -25,11 +25,11 @@ const PersonForm = ({ newName, newNumber, onNameChange, onNumberChange, onSubmit
   </form>
 )
 
-const Persons = ({ persons }) => (
+const Persons = ({ persons, deletePerson }) => (
   <div>
     {persons.map(person => (
       <div key={person.id}>
-        {person.name} {person.number}
+        {person.name} {person.number} <button onClick={() => deletePerson(person.id, person.name)}>delete</button>
       </div>
     ))}
   </div>
@@ -53,13 +53,10 @@ const App = () => {
   const newPerson = (e) => {
     e.preventDefault()
     if (alertExisting()) return
-
     const personObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1,
     }
-    
     personService
       .create(personObject)
       .then(createdPerson => {
@@ -86,6 +83,19 @@ const App = () => {
     setFilteredPersons(filtered)
   }
 
+  const deletePerson = (id, name) => {
+    if (window.confirm(`Delete ${name}`)) {
+      personService
+        .deleteRecord(id)
+        .then(() => 
+          setFilteredPersons(filteredPersons.filter(p => p.id !== id)
+        ))
+        .catch(error => {
+          console.log('Error deleting the person', error);
+        })
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -99,7 +109,7 @@ const App = () => {
         onSubmit={newPerson}
       />
       <h3>Numbers</h3>
-      <Persons persons={filteredPersons} />
+      <Persons persons={filteredPersons} deletePerson={(id, name) => deletePerson(id, name)} />
     </div>
   )
 }
