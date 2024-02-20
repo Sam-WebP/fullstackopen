@@ -35,11 +35,30 @@ const Persons = ({ persons, deletePerson }) => (
   </div>
 )
 
+const Notification = ({ message, duration }) => {
+  if (message === '') {
+    return null
+  }
+
+  const notiStyle = {
+    color: 'green',
+    fontSize: 20,
+    margin: '15px'
+  }
+
+  return (
+    <div style={notiStyle}>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filteredPersons, setFilteredPersons] = useState(persons)
+  const [message, setMessage] = useState('')
 
   useEffect(() => {
     personService
@@ -64,9 +83,11 @@ const App = () => {
         setPersons(persons.concat(createdPerson))
         setNewName('')
         setNewNumber('')
+        setMessage(`Added ${personObject.name}`)
+        setTimeout(() => setMessage(''), 3000)
       })
       .catch(error => {
-        console.log(`Error creating ${personObject.name}`, error);
+        console.log(`Error creating ${personObject.name}`, error)
       })
   }
 
@@ -96,6 +117,8 @@ const App = () => {
               p.id !== existingMatch.id ? p : returnedValue)
             )
           )
+        setMessage(`${newName}'s number has been changed to ${newNumber}`)
+        setTimeout(() => setMessage(''), 3000)
       }
       setNewName('')
       setNewNumber('')
@@ -113,9 +136,11 @@ const App = () => {
     setFilteredPersons(filtered)
   }
 
+  
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message}/>
       <Filter onChange={nameFilter} />
       <h3>Add a new</h3>
       <PersonForm

@@ -34,6 +34,8 @@
   h1 {
     font-size: 3.2em;
     line-height: 1.1;
+    color: green;
+    font-style: italic;
   }
   
   button {
@@ -55,6 +57,22 @@
     outline: 4px auto -webkit-focus-ring-color;
   }
   
+  .note {
+    color: rgb(255, 239, 132);
+    padding-top: 3px;
+    font-size: 15px;
+  }
+
+  .error {
+    color: red;
+    background: lightgrey;
+    font-size: 20px;
+    border-style: solid;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
   @media (prefers-color-scheme: light) {
     :root {
       color: #213547;
