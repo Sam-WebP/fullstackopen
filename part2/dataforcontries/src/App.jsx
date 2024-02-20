@@ -11,22 +11,27 @@ const Filter = ({ onChange }) => {
   )
 }
 
-const Results = ({ filteredCountries }) => {
-  if (filteredCountries.length === 1) {
+const CountryDetails = ({ filteredCountries }) => {
+  return (
+    <>
+      <h1>{filteredCountries[0].name.common}</h1>
+      <div>Capital {filteredCountries[0].capital}</div>
+      <div>Area {filteredCountries[0].area}</div>
+      <h2>Languages:</h2>
+      <ul>
+        {Object.values(filteredCountries[0].languages).map(language => (
+          <li key={language}>{language}</li>
+        ))}
+      </ul>
+      <img src={filteredCountries[0].flags.png}></img>
+    </>
+  )
+}
 
+const Results = ({ filteredCountries, onShowDetails }) => {
+  if (filteredCountries.length === 1) {
     return (
-      <>
-        <h1>{filteredCountries[0].name.common}</h1>
-        <div>Capital {filteredCountries[0].capital}</div>
-        <div>Area {filteredCountries[0].area}</div>
-        <h2>Languages:</h2>
-        <ul>
-          {Object.values(filteredCountries[0].languages).map(language => (
-            <li key={language}>{language}</li>
-          ))}
-        </ul>
-        <img src={filteredCountries[0].flags.png}></img>
-      </>
+      <CountryDetails filteredCountries={filteredCountries}/>
     )
   }
   if (filteredCountries.length >= 10) {
@@ -37,7 +42,10 @@ const Results = ({ filteredCountries }) => {
   return (
     <>
       {filteredCountries.map(country => (
-        <div key={country.name.common}>{country.name.common}</div>
+        <div key={country.name.common}>
+          {country.name.common} 
+          <button onClick={() => onShowDetails(country)}>show</button>
+        </div>
       ))}
     </>
   )
@@ -46,6 +54,7 @@ const Results = ({ filteredCountries }) => {
 const App = () => {
   const [countries, setCountries] = useState([])
   const [filteredCountries, setFilteredCountries] = useState([])
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   useEffect(() => {
     countriesService
@@ -54,6 +63,10 @@ const App = () => {
         setCountries(allCountries)
       })
   }, [])
+
+  const handleShowDetails = (country) => {
+    setSelectedCountry(country);
+  };
 
   const nameFilter = (e) => {
     const searchTerm = e.target.value.toLowerCase()
@@ -67,7 +80,8 @@ const App = () => {
   return (
     <div>
       <Filter onChange={nameFilter} />
-      <Results filteredCountries={filteredCountries}/>
+      <Results filteredCountries={filteredCountries} onShowDetails={handleShowDetails} />
+      {selectedCountry && <CountryDetails filteredCountries={[selectedCountry]} />}
     </div>
   )
 }
