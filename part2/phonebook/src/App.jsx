@@ -61,14 +61,44 @@ const App = () => {
       .create(personObject)
       .then(createdPerson => {
         setFilteredPersons(filteredPersons.concat(createdPerson))
+        setPersons(persons.concat(createdPerson))
         setNewName('')
         setNewNumber('')
       })
+      .catch(error => {
+        console.log(`Error creating ${personObject.name}`, error);
+      })
+  }
+
+  const deletePerson = (id, name) => {
+    if (window.confirm(`Delete ${name}`)) {
+      personService
+        .deleteRecord(id)
+        .then(() => 
+          setFilteredPersons(filteredPersons.filter(p => p.id !== id)),
+          setPersons(persons.filter(p => p.id !== id))
+        )
+        .catch(error => {
+          console.log('Error deleting the person', error);
+        })
+    }
   }
 
   const alertExisting = () => {
     if (persons.some(person => person.name === newName)) {
-      window.alert(`${newName} is already added to phonebook`)
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        const existingMatch = filteredPersons.find(person => person.name === newName)
+        const updatedPerson = { ...existingMatch, number: newNumber }
+        personService
+          .update(updatedPerson.id, updatedPerson)
+          .then(returnedValue => 
+            setFilteredPersons(persons.map(p => 
+              p.id !== existingMatch.id ? p : returnedValue)
+            )
+          )
+      }
+      setNewName('')
+      setNewNumber('')
       return true
     }
     return false
@@ -81,19 +111,6 @@ const App = () => {
     })
     
     setFilteredPersons(filtered)
-  }
-
-  const deletePerson = (id, name) => {
-    if (window.confirm(`Delete ${name}`)) {
-      personService
-        .deleteRecord(id)
-        .then(() => 
-          setFilteredPersons(filteredPersons.filter(p => p.id !== id)
-        ))
-        .catch(error => {
-          console.log('Error deleting the person', error);
-        })
-    }
   }
 
   return (
@@ -109,7 +126,7 @@ const App = () => {
         onSubmit={newPerson}
       />
       <h3>Numbers</h3>
-      <Persons persons={filteredPersons} deletePerson={(id, name) => deletePerson(id, name)} />
+      <Persons persons={filteredPersons} deletePerson={deletePerson} />
     </div>
   )
 }
