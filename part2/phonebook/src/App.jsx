@@ -43,7 +43,7 @@ const Notification = ({ message, duration }) => {
   const notiStyle = {
     color: 'green',
     fontSize: 20,
-    margin: '15px'
+    padding: '15px',
   }
 
   return (
@@ -117,8 +117,13 @@ const App = () => {
               p.id !== existingMatch.id ? p : returnedValue)
             )
           )
+          .catch(error => {
+            setMessage(`Information of ${newName} has already been removed from sever`)
+            //return true
+            console.log(message)
+          })
         setMessage(`${newName}'s number has been changed to ${newNumber}`)
-        setTimeout(() => setMessage(''), 3000)
+        setTimeout(() => setMessage(''), 6000)
       }
       setNewName('')
       setNewNumber('')
