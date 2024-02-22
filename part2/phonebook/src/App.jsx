@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react'
-import personService from '/root/repos/fullstackopen/part2/phonebook/src/services/persons'
+import personService from '/src/services/persons.js'
 
 const Filter = ({ onChange }) => (
   <div>
