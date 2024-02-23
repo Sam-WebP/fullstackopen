@@ -7,7 +7,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:ui": "rm -rf /root/repos/fullstackopen/part3/dist && cd /root/repos/fullstackopen/part2/notes && npm run build && cp -r dist /root/repos/fullstackopen/part3",
+    "build:ui": "rm -rf dist && cd ../part2/notes && npm run build && cp -r dist ../../part3",
     "deploy": "flyctl deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
     "logs:prod": "fly logs"
