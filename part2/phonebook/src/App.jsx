@@ -35,7 +35,7 @@ const Persons = ({ persons, deletePerson }) => (
   </div>
 )
 
-const Notification = ({ message, duration }) => {
+const Notification = ({ message }) => {
   if (message === '') {
     return null
   }
