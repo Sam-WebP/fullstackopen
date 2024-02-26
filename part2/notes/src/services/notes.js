@@ -1,9 +1,5 @@
 import axios from 'axios'
-<<<<<<< HEAD
 const baseUrl = 'http://localhost:3001/api/notes'
-=======
-const baseUrl = '/api/notes'
->>>>>>> 0330cdf (Resolved merge conflicts)
 
 const getAll = () => {
   const request = axios.get(baseUrl)
