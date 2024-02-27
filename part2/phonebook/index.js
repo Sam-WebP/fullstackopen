@@ -1,10 +1,11 @@
+console.log("index.js running now")
 import dotenv from 'dotenv'
 dotenv.config();
+console.log("This is right after the dotenv config in the index.js", process.env.MONGODB_URI);
 import express from 'express'
 import cors from 'cors'
 import Person from '/root/repos/fullstackopen/part2/phonebook/src/models/person.js'
 const app = express()
-
 
 let persons = [
   {
