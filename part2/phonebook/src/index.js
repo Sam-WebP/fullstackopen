@@ -1,6 +1,10 @@
+import dotenv from 'dotenv'
+dotenv.config();
 import express from 'express'
 import cors from 'cors'
+import Person from '/root/repos/fullstackopen/part2/phonebook/src/models/person.js'
 const app = express()
+
 
 let persons = [
   {
@@ -24,26 +28,31 @@ let persons = [
     "number": "34"
   },
   {
-    "id": "3050",
-    "name": "asdfadfadf",
-    "number": "3423424"
-  },
-  {
     "id": "050f",
     "name": "asdffsa fda asdf",
     "number": "342432"
   }
 ]
 
-
 app.use(cors())
 app.use(express.json())
 app.use(express.static('dist'))
 
 app.post('/api/persons', (request, response) => {
-  const person = request.body
-  console.log(person)
-  response.json(person)
+  const body = request.body
+
+  if (body.content === undefined) {
+    return response.status(400).json({ error: 'content missing' })
+  }
+
+  const person = new Person({
+    content: body.content,
+    important: body.important || false,
+  })
+
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
 })
 
 const generateId = () => {
@@ -53,40 +62,52 @@ const generateId = () => {
   return maxId + 1
 }
 
-app.post('/api/persons', (request, response) => {
-  const body = request.body
+// app.post('/api/persons', (request, response) => {
+//   const body = request.body
 
-  if (!body.content) {
-    return response.status(400).json({ 
-      error: 'content missing' 
-    })
-  }
+//   if (!body.content) {
+//     return response.status(400).json({ 
+//       error: 'content missing' 
+//     })
+//   }
 
-  const person = {
-    content: body.content,
-    important: body.important || false,
-    id: generateId(),
-  }
+//   const person = {
+//     content: body.content,
+//     important: body.important || false,
+//     id: generateId(),
+//   }
 
-  persons = persons.concat(person)
+//   persons = persons.concat(person)
 
-  response.json(person)
-})
+//   response.json(person)
+// })
 
 app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
-  
-  if (person) {
+  Person.findById(request.params.id).then(person => {
     response.json(person)
-  } else {
-    response.status(404).end()
-  }
+  })
 })
 
+// app.get('/api/persons/:id', (request, response) => {
+//   const id = Number(request.params.id)
+//   const person = persons.find(person => person.id === id)
+  
+//   if (person) {
+//     response.json(person)
+//   } else {
+//     response.status(404).end()
+//   }
+// })
+
 app.get('/api/persons', (request, response) => {
-  response.json(persons);
-});
+  Person.find({}).then(people => {
+    response.json(people)
+  })
+})
+
+// app.get('/api/persons', (request, response) => {
+//   response.json(persons);
+// });
 
 app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
@@ -95,7 +116,7 @@ app.delete('/api/persons/:id', (request, response) => {
   response.statusMessage(204).end()
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
