@@ -8,3 +8,12 @@ content-type: application/json
   "content": "Ensure that everything is still working",
   "important": true
 }
+
+###
+PUT http://localhost:3001/api/notes/ HTTP/1.1
+content-type: application/json
+
+{
+  "content": "update the content section",
+  "important": true
+}
