@@ -92,6 +92,7 @@ const App = () => {
   }
 
   const deletePerson = (id, name) => {
+    console.log("const deletePerson run")
     if (window.confirm(`Delete ${name}`)) {
       personService
         .deleteRecord(id)

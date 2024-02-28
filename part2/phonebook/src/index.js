@@ -42,13 +42,13 @@ app.use(express.static('dist'))
 app.post('/api/persons', (request, response) => {
   const body = request.body
 
-  if (body.content === undefined) {
-    return response.status(400).json({ error: 'content missing' })
+  if (body.name === undefined) {
+    return response.status(400).json({ error: 'name missing' })
   }
 
   const person = new Person({
-    content: body.content,
-    important: body.important || false,
+    name: body.name,
+    number: body.number || false,
   })
 
   person.save().then(savedPerson => {
@@ -111,6 +111,7 @@ app.get('/api/persons', (request, response) => {
 // });
 
 app.delete('/api/persons/:id', (request, response) => {
+  console.log("app.delete run")
   const id = Number(request.params.id)
   persons = persons.filter(person => person.id !== id)
 

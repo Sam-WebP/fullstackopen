@@ -1,4 +1,4 @@
-console.log("perons.js being run now")
+console.log("persons.js being run now")
 import dotenv from 'dotenv'
 dotenv.config();
 import mongoose from 'mongoose'
