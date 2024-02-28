@@ -4,7 +4,7 @@ dotenv.config();
 console.log("This is right after the dotenv config in the index.js", process.env.MONGODB_URI);
 import express from 'express'
 import cors from 'cors'
-import Person from '/root/repos/fullstackopen/part2/phonebook/src/models/person.js'
+import Person from './models/person.js'
 const app = express()
 
 let persons = [
@@ -117,7 +117,8 @@ app.delete('/api/persons/:id', (request, response) => {
   response.statusMessage(204).end()
 })
 
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 3001
+console.log("Port being listened to is", PORT)
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
