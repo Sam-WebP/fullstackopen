@@ -39,7 +39,8 @@ const personSchema = new mongoose.Schema({
         const indexToCheck = v[2] === '-' ? 2 : v[3] === '-' ? 3 : null
         if (indexToCheck !== null) {
           return v.split('').every((char, index) => {
-            return char !== '-' || index === indexToCheck;
+            if (index === indexToCheck) return char === '-'
+            return char >= '0' && char <= '9'
           })
         }
         return false;
