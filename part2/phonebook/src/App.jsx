@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react'
 import personService from '/src/services/persons.js'
+import { name } from 'nodeman/lib/mustache'
 
 const Filter = ({ onChange }) => (
   <div>
@@ -35,13 +36,13 @@ const Persons = ({ persons, deletePerson }) => (
   </div>
 )
 
-const Notification = ({ message }) => {
+const Notification = ({ message, colour }) => {
   if (message === '') {
     return null
   }
 
   const notiStyle = {
-    color: 'green',
+    color: colour,
     fontSize: 20,
     padding: '15px',
   }
@@ -59,6 +60,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filteredPersons, setFilteredPersons] = useState(persons)
   const [message, setMessage] = useState('')
+  const [notiColour, setNotiColour] = useState('')
 
   useEffect(() => {
     personService
@@ -69,13 +71,27 @@ const App = () => {
       })
   }, [])
 
+  const nameSizeValidate = (name, size) => {
+    console.log("The length of the name is", name.length)
+    console.log("The size that is being compared is", size)
+    if (name.length < size) {
+      setNotiColour('red')
+      setMessage(`Person validation failed: name: Path 'name' '${name}' is shorter than the minimum allowed length (${size})`)
+      setTimeout(() => setMessage(''), 6000)
+    }
+  }
+
   const newPerson = (e) => {
     e.preventDefault()
     if (alertExisting()) return
+
     const personObject = {
       name: newName,
       number: newNumber,
     }
+
+    nameSizeValidate(personObject.name, 3)
+
     personService
       .create(personObject)
       .then(createdPerson => {
@@ -83,6 +99,7 @@ const App = () => {
         setPersons(persons.concat(createdPerson))
         setNewName('')
         setNewNumber('')
+        setNotiColour('green')
         setMessage(`Added ${personObject.name}`)
         setTimeout(() => setMessage(''), 3000)
       })
@@ -145,8 +162,8 @@ const App = () => {
   
   return (
     <div>
-      <h2>Phonebook</h2>
-      <Notification message={message}/>
+      <h2>Phoneboook</h2>
+      <Notification message={message} colour={notiColour}/>
       <Filter onChange={nameFilter} />
       <h3>Add a new</h3>
       <PersonForm

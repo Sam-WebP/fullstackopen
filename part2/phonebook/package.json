@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
+    "load": "nodemon index.js build",
     "vdev": "vite",
     "start": "node src/index.js",
     "build": "vite build",
