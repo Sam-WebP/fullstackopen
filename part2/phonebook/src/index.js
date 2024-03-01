@@ -1,7 +1,6 @@
-console.log("index.js running now")
 import dotenv from 'dotenv'
 dotenv.config();
-console.log("This is right after the dotenv config in the index.js", process.env.MONGODB_URI);
+console.log('This is right after the dotenv config in the index.js', process.env.MONGODB_URI);
 import express from 'express'
 import cors from 'cors'
 import Person from './models/person.js'
@@ -40,8 +39,8 @@ const unknownEndpoint = (request, response) => {
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
-  console.log("Number[2] is", body.number[2])
-  console.log("Number[3] is", body.number[3])
+  console.log('Number[2] is', body.number[2])
+  console.log('Number[3] is', body.number[3])
 
   const person = new Person({
     name: body.name,
@@ -57,8 +56,8 @@ app.post('/api/persons', (request, response, next) => {
 app.put('/api/persons/:id', (request, response, next) => {
   const { content, important } = request.body
 
-  Person.findByIdAndUpdate(request.params.id, 
-    person, 
+  Person.findByIdAndUpdate(request.params.id,
+    request.params.id,
     { content, important },
     { new: true, runValidators: true, context: 'query' }
   )
@@ -88,7 +87,7 @@ app.get('/api/persons', (request, response) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -98,7 +97,7 @@ app.use(unknownEndpoint)
 app.use(errorHandler)
 
 const PORT = process.env.PORT
-console.log("Port being listened to is", PORT)
+console.log('Port being listened to is', PORT)
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
