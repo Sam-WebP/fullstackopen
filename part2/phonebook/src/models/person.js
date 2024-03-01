@@ -9,6 +9,13 @@ const url = process.env.MONGODB_URI
 
 console.log('connecting to', url)
 
+// const validateNumber = (num) => {
+//   if (num[3] === '-' || num[2] === '-') {
+//     return true
+//   }
+//   return false
+// }
+
 mongoose.connect(url)
 
   .then(result => {
@@ -24,7 +31,22 @@ const personSchema = new mongoose.Schema({
     minLength: 3,
     required: true
    },
-  number: String,
+  number: {
+    type: String,
+    minLength: 8,
+    validate: {
+      validator: (v) => {
+        const indexToCheck = v[2] === '-' ? 2 : v[3] === '-' ? 3 : null
+        if (indexToCheck !== null) {
+          return v.split('').every((char, index) => {
+            return char !== '-' || index === indexToCheck;
+          })
+        }
+        return false;
+      },
+      message: props => `${props.value} is not a valid phone number!`
+    },
+  }
 })
 
 personSchema.set('toJSON', {

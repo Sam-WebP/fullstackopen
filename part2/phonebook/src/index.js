@@ -40,6 +40,9 @@ const unknownEndpoint = (request, response) => {
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
+  console.log("Number[2] is", body.number[2])
+  console.log("Number[3] is", body.number[3])
+
   const person = new Person({
     name: body.name,
     number: body.number || false,
