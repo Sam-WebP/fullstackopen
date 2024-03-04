@@ -4,6 +4,5 @@ content-type: application/json
 {
   "title": "Test Blog Title",
   "author": "J. K.Rowling",
-  "url": "www.urltotheblog.com.au",
   "likes": 52
 }

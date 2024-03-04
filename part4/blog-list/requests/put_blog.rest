@@ -1,0 +1,11 @@
+PUT http://localhost:3003/api/blogs/65e2a31b6ad77ec340ca82b4 HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Updated Blog Title",
+  "author": "Updated Author Name",
+  "url": "www.totheblog.com.au",
+  "likes": 100
+}
+
+// Replace the id at the end with an existing id in the db

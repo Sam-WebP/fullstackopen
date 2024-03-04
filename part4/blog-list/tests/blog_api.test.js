@@ -54,6 +54,59 @@ test('Adding a new blog post increases the count by one', async () => {
   assert.strictEqual(finalBlogCount, initialBlogCount + 1)
 })
 
+test('If the likes property is missing, it defaults to 0', async () => {
+  const newBlog = {
+    title: "A Blog Without Likes",
+    author: "Author Unknown",
+    url: "https://example.com/blog-without-likes"
+  }
+
+  const postResponse = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const createdBlogId = postResponse.body.id 
+
+  const createdBlog = await api
+    .get(`/api/blogs/${createdBlogId}`)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  assert.strictEqual(createdBlog.body.likes, 0)
+})
+
+test('If the title property is missing, status code 400', async () => {
+  const newBlog = {
+    author: "Justin Wakim",
+    url: "https://worldofparts.com.au/",
+    likes: 52
+  }
+
+    const postResponse = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+
+  assert.strictEqual(postResponse.status, 400)
+})
+
+test('If the url property is missing, status code 400', async () => {
+    const newBlog = {
+      title: "Testing without the URL",
+      author: "Justin Wakim",
+      likes: 52
+    }
+  
+      const postResponse = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+  
+    assert.strictEqual(postResponse.status, 400)
+  })
+
 after(async () => {
   await mongoose.connection.close()
 })
