@@ -16,18 +16,42 @@ beforeEach(async () => {
 
 test('Returns the correct amount of blog posts in the JSON format', async () => {
   const response = await api
-  .get('/api/blogs')
-  .expect(200)
-  .expect('Content-Type', /application\/json/)
+    .get('/api/blogs')
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
   
   assert.strictEqual(response.body.length, 6)
 })
 
 test('ID field is named "id"', async () => {
   const response = await api
-  .get('/api/blogs')
+    .get('/api/blogs')
+    .expect(200)
 
   assert.strictEqual(funcTesting.checkID(response), true)
+})
+
+test('Adding a new blog post increases the count by one', async () => {
+  const firstResponse = await api.get('/api/blogs')
+  const initialBlogCount = firstResponse.body.length
+
+  const newBlog = {
+    title: "World of Parts",
+    author: "Justin Wakim",
+    url: "https://worldofparts.com.au/",
+    likes: 52
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const secondResponse = await api.get('/api/blogs')
+  const finalBlogCount = secondResponse.body.length
+
+  assert.strictEqual(finalBlogCount, initialBlogCount + 1)
 })
 
 after(async () => {
