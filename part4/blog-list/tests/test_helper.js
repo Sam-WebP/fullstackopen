@@ -51,6 +51,12 @@ const initialBlogs = [
   }  
 ]
 
+const checkDeleted = (blogs, idGone) => {
+  return blogs.every(blog => blog.id !== idGone)
+}
+
+
 module.exports = {
-  initialBlogs
+  initialBlogs,
+  checkDeleted
 }

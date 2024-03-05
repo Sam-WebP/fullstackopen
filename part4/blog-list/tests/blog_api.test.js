@@ -19,6 +19,8 @@ test('Returns the correct amount of blog posts in the JSON format', async () => 
     .get('/api/blogs')
     .expect(200)
     .expect('Content-Type', /application\/json/)
+    
+    console.log('ALL OF THEM ', response.body)
   
   assert.strictEqual(response.body.length, 6)
 })
@@ -105,7 +107,21 @@ test('If the url property is missing, status code 400', async () => {
       .expect(400)
   
     assert.strictEqual(postResponse.status, 400)
-  })
+})
+
+test('Deleting a blog, async', async () => {
+
+  const response = await api
+    .get('/api/blogs')
+    .expect(200)
+    .expect('Content-Type', /application\/json/)  
+  
+  await api
+    .delete(`/api/blogs/65e5c8c630c22b1be9f8b271`) 
+    .expect(204)
+
+  assert.strictEqual(helper.checkDeleted(response.body, '65e5c8c630c22b1be9f8b271'), true)
+})
 
 after(async () => {
   await mongoose.connection.close()

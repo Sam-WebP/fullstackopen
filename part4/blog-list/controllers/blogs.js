@@ -34,17 +34,22 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.put('/:id', (request, response) => {
-  const { id } = request.params // Extracting the ID from the URL
-  const blogUpdate = request.body // The updated blog data
+  const { id } = request.params
+  const blogUpdate = request.body
 
   Blog.findByIdAndUpdate(id, blogUpdate, { new: true, runValidators: true, context: 'query' })
     .then(updatedBlog => {
       if (updatedBlog) {
         response.json(updatedBlog)
       } else {
-        response.status(404).end() // If no blog with the given ID was found
+        response.status(404).end()
       }
     })
+})
+
+blogsRouter.delete('/:id', (request, response) => {
+  Blog.findByIdAndDelete(request.params.id)
+    .then(response.status(204).end())
 })
 
 module.exports = blogsRouter
