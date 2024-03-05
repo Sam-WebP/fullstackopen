@@ -5,7 +5,7 @@ Content-Type: application/json
   "title": "Updated Blog Title",
   "author": "Updated Author Name",
   "url": "www.totheblog.com.au",
-  "likes": 100
+  "likes": 106
 }
 
 // Replace the id at the end with an existing id in the db
