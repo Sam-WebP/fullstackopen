@@ -1,14 +1,15 @@
 const blogsRouter = require('express').Router()
+const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
-// blogsRouter.get('/', (request, response) => {
-//   Blog
-//     .find({})
-//     .then(blogs => {
-//       response.json(blogs)
-//     })
-// })
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
+  }
+  return null
+}
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1 })
@@ -27,8 +28,18 @@ blogsRouter.get('/:id', (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
   try {
+
+    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+    console.log('Decoded token:', decodedToken)
+
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' })
+    }
+    const user = await User.findById(decodedToken.id)
+    console.log('User:', user)
+
     const { body } = request
-    const user = await User.findById(body.userId)
+    console.log('Request body:', body)
 
     if (!user) {
       return response.status(404).send({ error: 'User not found' })
@@ -48,6 +59,7 @@ blogsRouter.post('/', async (request, response) => {
 
     response.status(201).json(savedBlog)
   } catch (error) {
+    console.error('Error in blogsRouter.post:', error)
     if (error.name === 'ValidationError') {
       response.status(400).send({ error: error.message })
     } else {

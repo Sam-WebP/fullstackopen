@@ -8,6 +8,7 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const helper = require('./test_helper')
 const funcTesting = require('../utils/api_functions');
+const jwt = require('jsonwebtoken');
 
 let dummyUserId
 
@@ -20,6 +21,8 @@ beforeEach(async () => {
 
   const insertedUsers = await User.insertMany(helper.initialUsers)
   dummyUserId = insertedUsers[0].id.toString()
+
+  token = jwt.sign({ id: dummyUserId }, process.env.SECRET)
 })
 
 describe('GET REQUESTS', () => {
@@ -56,6 +59,7 @@ describe('POST REQUESTS', () => {
   
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -76,6 +80,7 @@ describe('POST REQUESTS', () => {
   
     const postResponse = await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -101,9 +106,10 @@ describe('Check for missing required fields', () => {
     }
   
       const postResponse = await api
-      .post('/api/blogs')
-      .send(newBlog)
-      .expect(400)
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(newBlog)
+        .expect(400)
   
     assert.strictEqual(postResponse.status, 400)
   })
@@ -118,6 +124,7 @@ describe('Check for missing required fields', () => {
     
         const postResponse = await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(400)
     
@@ -152,9 +159,10 @@ describe('PUT REQUESTS', () => {
     }
   
     const postResponse = await api
-    .post(`/api/blogs/`)
-    .send(newBlog)
-    .expect(201)
+      .post(`/api/blogs/`)
+      .set('Authorization', `Bearer ${token}`)
+      .send(newBlog)
+      .expect(201)
   
     const createdBlogId = postResponse.body.id 
   

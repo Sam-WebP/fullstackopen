@@ -7,21 +7,18 @@ const bcrypt = require('bcrypt')
 const User = require('../models/user')
 const { default: mongoose } = require('mongoose')
 
-const helper = require('./test_helper');
-
 describe('when there is initially one user in db', () => {
   beforeEach(async () => {
     await User.deleteMany({})
 
     const passwordHash = await bcrypt.hash('sekret', 10)
     const user = new User({ username: 'root', passwordHash })
+    // const token = jwt.sign({ id: dummyUserId }, process.env.SECRET)
 
     await user.save()
   })
 
   test('creation succeeds with a fresh username', async () => {
-    const usersAtStart = await helper.usersInDb()
-
     const newUser = {
       username: 'mluukkai',
       name: 'Matti Luukkainen',
@@ -34,11 +31,13 @@ describe('when there is initially one user in db', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
-    const usersAtEnd = await helper.usersInDb()
-    assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
+    const response = await api
+      .get('/api/users')
+      .expect('Content-Type', /application\/json/)
 
-    const usernames = usersAtEnd.map(u => u.username)
-    assert(usernames.includes(newUser.username))
+    const usernames = response.body.map(user => user.username)
+
+    assert.strictEqual(usernames.includes('mluukkai'), true)
   })
 
   test('User with password less than 3 characters is not created', async () => {
