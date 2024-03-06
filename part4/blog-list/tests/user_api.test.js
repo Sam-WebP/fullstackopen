@@ -40,7 +40,27 @@ describe('when there is initially one user in db', () => {
     const usernames = usersAtEnd.map(u => u.username)
     assert(usernames.includes(newUser.username))
   })
+
+  test('User with password less than 3 characters is not created', async () => {
+    const newUser = {
+      "username": "TestShortPassword",
+      "name": "Name for test",
+      "password": "ab"
+    }
+
+    const response = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    assert.strictEqual(response.body.error, "password must be at least 3 characters long")
+  })
+
+
 })
+
+
 
 after(async () => {
     await mongoose.connection.close()
