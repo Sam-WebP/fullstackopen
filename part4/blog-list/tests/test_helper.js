@@ -62,8 +62,19 @@ const usersInDb = async () => {
   return users.map(user => user.toJSON())
 }
 
+initialUsers = [
+  {
+    blogs: [ ],
+    username: "Test User",
+    name: "Test User",
+    notes: [ ],
+    id: "65e6d4562b3852a7e02efe69",
+  }
+]
+
 module.exports = {
   initialBlogs,
+  initialUsers,
   checkDeleted,
   usersInDb
 }

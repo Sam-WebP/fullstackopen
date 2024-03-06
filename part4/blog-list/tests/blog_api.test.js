@@ -5,13 +5,21 @@ const app = require('../app')
 const assert = require('node:assert');
 const api = supertest(app)
 const Blog = require('../models/blog')
-
+const User = require('../models/user')
 const helper = require('./test_helper')
-const funcTesting = require('../utils/api_functions')
+const funcTesting = require('../utils/api_functions');
+
+let dummyUserId
 
 beforeEach(async () => {
-  await Blog.deleteMany({})
-  await Blog.insertMany(helper.initialBlogs)
+  await Promise.all([
+    Blog.deleteMany({}),
+    Blog.insertMany(helper.initialBlogs),
+    User.deleteMany({})
+  ])
+
+  const insertedUsers = await User.insertMany(helper.initialUsers)
+  dummyUserId = insertedUsers[0].id.toString()
 })
 
 describe('GET REQUESTS', () => {
@@ -42,7 +50,8 @@ describe('POST REQUESTS', () => {
       title: "World of Parts",
       author: "Justin Wakim",
       url: "https://worldofparts.com.au/",
-      likes: 52
+      likes: 52,
+      userId: dummyUserId
     }
   
     await api
@@ -61,7 +70,8 @@ describe('POST REQUESTS', () => {
     const newBlog = {
       title: "A Blog Without Likes",
       author: "Author Unknown",
-      url: "https://example.com/blog-without-likes"
+      url: "https://example.com/blog-without-likes",
+      userId: dummyUserId
     }
   
     const postResponse = await api
@@ -86,7 +96,8 @@ describe('Check for missing required fields', () => {
     const newBlog = {
       author: "Justin Wakim",
       url: "https://worldofparts.com.au/",
-      likes: 52
+      likes: 52,
+      userId: dummyUserId
     }
   
       const postResponse = await api
@@ -101,7 +112,8 @@ describe('Check for missing required fields', () => {
       const newBlog = {
         title: "Testing without the URL",
         author: "Justin Wakim",
-        likes: 52
+        likes: 52,
+        userId: dummyUserId
       }
     
         const postResponse = await api
@@ -136,6 +148,7 @@ describe('PUT REQUESTS', () => {
       author: "Samuel Moran",
       url: "http://updatingthelikes.com.au",
       likes: 5,
+      userId: dummyUserId
     }
   
     const postResponse = await api
