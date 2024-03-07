@@ -1,7 +1,5 @@
 const blogsRouter = require('express').Router()
-const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
-const User = require('../models/user')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1 })
@@ -21,6 +19,9 @@ blogsRouter.get('/:id', (request, response) => {
 blogsRouter.post('/', async (request, response) => {
   try {
     const user = request.user
+    if (!user) {
+      return response.status(401).send({ error: 'User not authenticated' })
+    }
 
     const { body } = request
     console.log('Request body:', body)
@@ -66,12 +67,17 @@ blogsRouter.delete('/:id', async (request, response) => {
   const user = request.user
 
   if (!user) {
-    console.log("🚀 ~ blogsRouter.delete ~ user:", user)
-    return response.status(404).send({ error: 'User not authenticated' })
+    return response.status(401).send({ error: 'User not authenticated' })
   }
 
-  Blog.findByIdAndDelete(request.params.id)
-    .then(response.status(204).end())
+  try {
+    await Blog.findByIdAndDelete(request.params.id)
+    response.status(204).end()
+  } catch (error) {
+    response.status(500).json({ error: 'Internal server error' })
+  }
+
+
 })
 
 module.exports = blogsRouter

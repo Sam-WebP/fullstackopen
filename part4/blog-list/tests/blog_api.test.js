@@ -13,17 +13,16 @@ const jwt = require('jsonwebtoken');
 let dummyUserId
 
 beforeEach(async () => {
-  await Promise.all([
-    Blog.deleteMany({}),
-    Blog.insertMany(helper.initialBlogs),
-    User.deleteMany({})
-  ])
+    await Blog.deleteMany({}),
+    await Blog.insertMany(helper.initialBlogs),
+    await User.deleteMany({})
 
   const insertedUsers = await User.insertMany(helper.initialUsers)
   dummyUserId = insertedUsers[0].id.toString()
 
   token = jwt.sign({ id: dummyUserId }, process.env.SECRET)
 })
+    
 
 describe('GET REQUESTS', () => {
   test('Returns the correct amount of blog posts in the JSON format', async () => {
@@ -86,7 +85,6 @@ describe('POST REQUESTS', () => {
       .expect('Content-Type', /application\/json/)
   
     const createdBlogId = postResponse.body.id 
-    console.log("🚀 ~ test ~ createdBlogId:", createdBlogId)
   
     const createdBlog = await api
       .get(`/api/blogs/${createdBlogId}`)
@@ -141,28 +139,23 @@ describe('DELETING REQUESTS', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
   
-    console.log("🚀 ~ test ~ initialResponse.body:", initialResponse.body)
-  
-    if (initialResponse.body.length === 0) {
-      console.log("No blogs found in the database. Skipping the test.")
-      return;
-    }
+    // if (initialResponse.body.length === 0) {
+    //   console.log("No blogs found in the database. Skipping the test.")
+    //   return;
+    // }
   
     const testBlog = initialResponse.body[0]
-    console.log("🚀 ~ test ~ testBlog:", testBlog)
-    console.log("🚀 ~ test ~ testBlog.id:", testBlog.id)
   
     await api
       .delete(`/api/blogs/${testBlog.id}`)
       .set('Authorization', `Bearer ${token}`)
-      .expect(204);
+      .expect(204)
   
     const secondResponse = await api
       .get('/api/blogs')
       .expect(200)
       .expect('Content-Type', /application\/json/)
   
-    console.log("🚀 ~ test ~ secondResponse.body:", secondResponse.body)
     assert.strictEqual(helper.checkDeleted(secondResponse.body, testBlog.id), true)
   })
     
