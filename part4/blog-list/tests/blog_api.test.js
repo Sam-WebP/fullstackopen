@@ -86,6 +86,7 @@ describe('POST REQUESTS', () => {
       .expect('Content-Type', /application\/json/)
   
     const createdBlogId = postResponse.body.id 
+    console.log("🚀 ~ test ~ createdBlogId:", createdBlogId)
   
     const createdBlog = await api
       .get(`/api/blogs/${createdBlogId}`)
@@ -133,18 +134,38 @@ describe('Check for missing required fields', () => {
 })
 
 describe('DELETING REQUESTS', () => { 
+
   test('Deleting a blog', async () => {
-    const response = await api
+    const initialResponse = await api
       .get('/api/blogs')
       .expect(200)
-      .expect('Content-Type', /application\/json/)  
-    
-    await api
-      .delete(`/api/blogs/65e5c8c630c22b1be9f8b271`) 
-      .expect(204)
+      .expect('Content-Type', /application\/json/)
   
-    assert.strictEqual(helper.checkDeleted(response.body, '65e5c8c630c22b1be9f8b271'), true)
+    console.log("🚀 ~ test ~ initialResponse.body:", initialResponse.body)
+  
+    if (initialResponse.body.length === 0) {
+      console.log("No blogs found in the database. Skipping the test.")
+      return;
+    }
+  
+    const testBlog = initialResponse.body[0]
+    console.log("🚀 ~ test ~ testBlog:", testBlog)
+    console.log("🚀 ~ test ~ testBlog.id:", testBlog.id)
+  
+    await api
+      .delete(`/api/blogs/${testBlog.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(204);
+  
+    const secondResponse = await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  
+    console.log("🚀 ~ test ~ secondResponse.body:", secondResponse.body)
+    assert.strictEqual(helper.checkDeleted(secondResponse.body, testBlog.id), true)
   })
+    
 })
 
 describe('PUT REQUESTS', () => { 
@@ -167,8 +188,8 @@ describe('PUT REQUESTS', () => {
     const createdBlogId = postResponse.body.id 
   
     await api
-    .put(`/api/blogs/${createdBlogId}`)
-    .send({ likes: 1000 })
+      .put(`/api/blogs/${createdBlogId}`)
+      .send({ likes: 1000 })
   
     const response = await api.get(`/api/blogs/${createdBlogId}`)
   
