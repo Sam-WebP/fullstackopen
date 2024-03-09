@@ -139,11 +139,6 @@ describe('DELETING REQUESTS', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
   
-    // if (initialResponse.body.length === 0) {
-    //   console.log("No blogs found in the database. Skipping the test.")
-    //   return;
-    // }
-  
     const testBlog = initialResponse.body[0]
   
     await api
