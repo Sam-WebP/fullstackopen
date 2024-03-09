@@ -5,9 +5,7 @@ import blogService from './services/blogs'
 import React from 'react'
 
 const Login = ({ username, password, handleLogin, user }) => {
-  if (user !== null) {
-    return null
-  }
+
 
   return (
     <form onSubmit={handleLogin}>
@@ -18,7 +16,7 @@ const Login = ({ username, password, handleLogin, user }) => {
           value={username}
           name="Username"
           onChange={({ target }) => setUsername(target.value)}
-        />
+          />
       </div>
       <div>
         password
@@ -27,12 +25,22 @@ const Login = ({ username, password, handleLogin, user }) => {
           value={password}
           name="Password"
           onChange={({ target }) => setPassword(target.value)}
-        />
+          />
       </div>
       <button type="submit">login</button>
     </form>
   )
 
+}
+
+const AllBlogs = ({ blogs }) => {
+  return (
+    <>
+      {blogs.map(blog =>
+        <Blog key={blog.id} blog={blog} />
+      )}
+    </>
+  )
 }
 
 const App = () => {
@@ -41,11 +49,11 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  // useEffect(() => {
-  //   blogService.getAll().then(blogs =>
-  //     setBlogs( blogs )
-  //   )  
-  // }, [])
+  useEffect(() => {
+    blogService.getAll().then(blogs =>
+      setBlogs( blogs )
+    )  
+  }, [])
 
   const handleLogin = (event) => {
     event.preventDefault()
@@ -56,11 +64,10 @@ const App = () => {
     <div>
       <h2>blogs</h2>
 
-      <Login username={username} password={password} handleLogin={handleLogin} user={user} />
-
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+      {user === null && <Login username={username} password={password} handleLogin={handleLogin} user={user} />}
+      {user !== <AllBlogs blogs={blogs} />}
+  
+      
     </div>
   )
 }
