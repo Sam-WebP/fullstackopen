@@ -8,27 +8,31 @@ const Login = ({ username, password, handleLogin, user }) => {
 
 
   return (
-    <form onSubmit={handleLogin}>
-      <div>
-        username
-          <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-          />
-      </div>
-      <div>
-        password
-          <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-          />
-      </div>
-      <button type="submit">login</button>
-    </form>
+    <>
+      <h2>Log in to application</h2>
+      <form onSubmit={handleLogin}>
+        <div>
+          username
+            <input
+            type="text"
+            value={username}
+            name="Username"
+            onChange={({ target }) => setUsername(target.value)}
+            />
+        </div>
+        <div>
+          password
+            <input
+            type="password"
+            value={password}
+            name="Password"
+            onChange={({ target }) => setPassword(target.value)}
+            />
+        </div>
+        <button type="submit">login</button>
+      </form>
+    </>
+    
   )
 
 }
@@ -36,9 +40,10 @@ const Login = ({ username, password, handleLogin, user }) => {
 const AllBlogs = ({ blogs }) => {
   return (
     <>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+      <h2>blogs</h2>
+        {blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} />
+        )}
     </>
   )
 }
@@ -62,12 +67,10 @@ const App = () => {
 
   return (
     <div>
-      <h2>blogs</h2>
 
       {user === null && <Login username={username} password={password} handleLogin={handleLogin} user={user} />}
       {user !== <AllBlogs blogs={blogs} />}
   
-      
     </div>
   )
 }
