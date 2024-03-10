@@ -4,7 +4,7 @@ import blogService from './services/blogs'
 
 import React from 'react'
 
-const Login = ({ username, password, handleLogin, user }) => {
+const Login = ({ username, password, handleLogin, setUsername, setPassword }) => {
 
 
   return (
@@ -53,23 +53,42 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  
+  
+  
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
     )  
-  }, [])
+  }, [user])
 
   const handleLogin = (event) => {
     event.preventDefault()
     console.log('logging in with', username, password)
+
+    const mockToken = 'mock-token'
+    blogService.setToken(mockToken)
+    setUser(mockToken)
+    setUsername('')
+    setPassword('')
+    
   }
 
   return (
     <div>
 
-      {user === null && <Login username={username} password={password} handleLogin={handleLogin} user={user} />}
-      {user !== <AllBlogs blogs={blogs} />}
+    {user === null ? (
+     <Login
+       username={username}
+       password={password}
+       handleLogin={handleLogin}
+       setUsername={setUsername}
+       setPassword={setPassword}
+     />
+    ) : (
+     <AllBlogs blogs={blogs} />
+    )}
   
     </div>
   )
