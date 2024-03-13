@@ -1,11 +1,16 @@
+// Token Broken when refreshing after logging in after the username db auth update
+// Need to update to make the user only login if the password is correct
+// 
+// 
+
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
+import userService from './services/users'
 
 import React from 'react'
 
 const Login = ({ username, password, handleLogin, setUsername, setPassword }) => {
-
 
   return (
     <>
@@ -37,16 +42,56 @@ const Login = ({ username, password, handleLogin, setUsername, setPassword }) =>
 
 }
 
-const AllBlogs = ({ blogs, username, handleLogout }) => {
+const AllBlogs = ({ blogs, username, handleLogout, createBlog, newBlog, handleInputChange }) => {
   return (
     <>
-      <h2>blogs</h2>
+      <h2>Blogs</h2>
         <Logout username={username} handleLogout={handleLogout} />
+        <br />
+        <CreateBlog createBlog={createBlog} newBlog={newBlog} handleInputChange={handleInputChange} />
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} />
         )}
     </>
   )
+}
+
+const CreateBlog = ({ createBlog, newBlog, handleInputChange }) => {
+
+  return (
+    <>
+      <h2>Create New</h2>
+      <form onSubmit={createBlog}>
+        <div>
+          <label>Title:</label>
+          <input
+            name="title"
+            value={newBlog.title}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div>
+          <label>Author:</label>
+          <input
+            name="author"
+            value={newBlog.author}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div>
+          <label>URL:</label>
+          <input
+            name="url"
+            value={newBlog.url}
+            onChange={handleInputChange}
+          />
+        </div>
+        <button type="submit">Add Blog</button>
+      </form>
+     </> 
+  )
+    
+
 }
 
 const Logout = ({ username, handleLogout }) => {
@@ -64,12 +109,12 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
 
   useEffect(() => {
     blogService.getAll().then(blogs => setBlogs(blogs));
   }, []);
   
-
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedInUser')
     console.log("🚀 ~ useEffect ~ loggedUserJSON:", loggedUserJSON)
@@ -87,21 +132,28 @@ const App = () => {
     }
   }, [])
 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault()
     console.log('logging in with', username, password)
     
-    const mockUser = {
-      username: username,
-      token: 'mock-token'
-    }
+    const confirmUser = await userService.getUser(username)
+    console.log("🚀 ~ handleLogin ~ confirmUser:", confirmUser)
+
+    // const mockUser = {
+    //   username: username,
+    //   token: 'mock-token'
+    // }
     
-    window.localStorage.setItem('loggedInUser', JSON.stringify(mockUser))
-    blogService.setToken(mockUser.token)
-    setUser(mockUser)
-    setUsername(mockUser.username)
+    window.localStorage.setItem('loggedInUser', JSON.stringify(confirmUser))
+    blogService.setToken(confirmUser.token)
+    setUser(confirmUser)
+    setUsername(confirmUser.username)
     setPassword('')
   }
+
+  // const gettingUser = async (username) => {
+  //   userService.getUser(username)
+  // }
 
   const handleLogout = (event) => {
     event.preventDefault()
@@ -109,6 +161,23 @@ const App = () => {
     blogService.setToken(null)
     setUser(null)
     console.log("Account Logged Out")
+  }
+
+  const createBlog = async (event) => {
+    event.preventDefault()
+    if (user && user.token) { // Ensure user and token exist
+      const createdBlog = await blogService.create(newBlog, user.token); // Use user.token
+      console.log('Blog added:', createdBlog)
+      setNewBlog({ title: '', author: '', url: '' }) // Reset newBlog state
+      setBlogs([...blogs, createdBlog]) // Update the blogs state to include the new blog
+    } else {
+      console.error('Token is missing. User must be logged in to create a blog.')
+    }
+  }
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setNewBlog({ ...newBlog, [name]: value });
   }
 
   return (
@@ -123,7 +192,19 @@ const App = () => {
        setPassword={setPassword}
      />
     ) : (
-     <AllBlogs blogs={blogs} username={username} handleLogout={handleLogout} />
+     
+      <>
+        
+        <AllBlogs 
+          blogs={blogs} 
+          username={username} 
+          handleLogout={handleLogout}
+          createBlog={createBlog}
+          newBlog={newBlog}
+          handleInputChange={handleInputChange}
+           />
+      </>
+     
     )}
   
     </div>

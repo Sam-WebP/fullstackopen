@@ -30,4 +30,26 @@ usersRouter.get('/', async (request, response) => {
   response.json(users)
 })
 
+usersRouter.get('/:id', async (request, response) => {
+  const { id } = request.params
+  const user = await User.findById(id)
+  response.json(user)
+}) 
+
+usersRouter.get('/username/:username', async (request, response) => {
+  const { username } = request.params;
+
+  try {
+    const user = await User.findOne({ username: username });
+    if (user) {
+      response.json(user);
+    } else {
+      response.status(404).send({ error: 'User not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching user by username:', error);
+    response.status(500).send({ error: 'Internal server error' });
+  }
+});
+
 module.exports = usersRouter
