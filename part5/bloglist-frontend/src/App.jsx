@@ -1,8 +1,4 @@
-// Token Broken when refreshing after logging in after the username db auth update
-// Need to update to make the user only login if the password is correct
-//  
-// 
-
+// Need to fix the unauthorised error when creating a blog
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
@@ -117,11 +113,9 @@ const App = () => {
   
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedInUser')
-    console.log("🚀 ~ useEffect ~ loggedUserJSON:", loggedUserJSON)
 
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      console.log("🚀 ~ useEffect ~ user:", user)
 
       if (user && user.token) {
         setUser(user)
@@ -134,15 +128,8 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    console.log('logging in with', username, password)
     
     const confirmUser = await loginService.loginUser(username, password)
-    console.log("🚀 ~ handleLogin ~ confirmUser:", confirmUser)
-
-    // const mockUser = {
-    //   username: username,
-    //   token: 'mock-token'
-    // }
     
     window.localStorage.setItem('loggedInUser', JSON.stringify(confirmUser))
     blogService.setToken(confirmUser.token)
@@ -161,11 +148,11 @@ const App = () => {
 
   const createBlog = async (event) => {
     event.preventDefault()
-    if (user && user.token) { // Ensure user and token exist
-      const createdBlog = await blogService.create(newBlog, user.token); // Use user.token
+    if (user && user.token) {
+      const createdBlog = await blogService.create(newBlog, user.token)
       console.log('Blog added:', createdBlog)
-      setNewBlog({ title: '', author: '', url: '' }) // Reset newBlog state
-      setBlogs([...blogs, createdBlog]) // Update the blogs state to include the new blog
+      setNewBlog({ title: '', author: '', url: '' })
+      setBlogs([...blogs, createdBlog])
     } else {
       console.error('Token is missing. User must be logged in to create a blog.')
     }
