@@ -1,12 +1,12 @@
 // Token Broken when refreshing after logging in after the username db auth update
 // Need to update to make the user only login if the password is correct
-// 
+//  
 // 
 
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
-import userService from './services/users'
+import loginService from './services/login'
 
 import React from 'react'
 
@@ -136,7 +136,7 @@ const App = () => {
     event.preventDefault()
     console.log('logging in with', username, password)
     
-    const confirmUser = await userService.getUser(username)
+    const confirmUser = await loginService.loginUser(username, password)
     console.log("🚀 ~ handleLogin ~ confirmUser:", confirmUser)
 
     // const mockUser = {
@@ -150,10 +150,6 @@ const App = () => {
     setUsername(confirmUser.username)
     setPassword('')
   }
-
-  // const gettingUser = async (username) => {
-  //   userService.getUser(username)
-  // }
 
   const handleLogout = (event) => {
     event.preventDefault()

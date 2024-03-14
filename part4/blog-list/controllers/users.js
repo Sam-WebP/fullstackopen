@@ -37,19 +37,54 @@ usersRouter.get('/:id', async (request, response) => {
 }) 
 
 usersRouter.get('/username/:username', async (request, response) => {
-  const { username } = request.params;
+  const { username } = request.params
 
   try {
-    const user = await User.findOne({ username: username });
+    const user = await User.findOne({ username: username })
     if (user) {
-      response.json(user);
+      response.json(user)
     } else {
       response.status(404).send({ error: 'User not found' });
     }
   } catch (error) {
-    console.error('Error fetching user by username:', error);
-    response.status(500).send({ error: 'Internal server error' });
+    console.error('Error fetching user by username:', error)
+    response.status(500).send({ error: 'Internal server error' })
+  }
+})
+
+usersRouter.put('/:id', async (request, response) => {
+  const { id } = request.params;
+  const userUpdate = request.body;
+  console.log("🚀 ~ usersRouter.put ~ userUpdate:", userUpdate)
+
+  try {
+
+    if (userUpdate.passwordHash) {
+      if (userUpdate.passwordHash.length < 3) {
+        return response.status(401).json({
+          error: 'password must be at least 3 characters long'
+        })
+      }
+    
+      const saltRounds = 10
+      const passwordH = await bcrypt.hash(userUpdate.passwordHash, saltRounds)
+      console.log("🚀 ~ BBEFORE CHANGE:", userUpdate.passwordHash)
+      userUpdate.passwordHash = passwordH
+      console.log("🚀 ~ AFTER CHANGE:", userUpdate.passwordHash)
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(id, userUpdate, { new: true, runValidators: true, context: 'query' });
+
+    if (updatedUser) {
+      response.json(updatedUser);
+    } else {
+      response.status(404).send({ error: 'User not found' });
+    }
+  } catch (error) {
+    console.error('Error updating user:', error);
+    response.status(400).send({ error: error.message });
   }
 });
+
 
 module.exports = usersRouter
