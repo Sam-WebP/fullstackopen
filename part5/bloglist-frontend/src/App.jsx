@@ -13,6 +13,7 @@ const App = () => {
   const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
   const [alertMessage, setAlertMessage] = useState(null)
   const [alertColor, setAlertColor] = useState(null)
+  const [createBlogVisible, setCreateBlogVisible] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs => setBlogs(blogs))
@@ -112,6 +113,8 @@ const App = () => {
           handleInputChange={handleInputChange}
           alertMessage={alertMessage}
           alertColor={alertColor}
+          createBlogVisible={createBlogVisible}
+          setCreateBlogVisible={setCreateBlogVisible}
         />
       </>
     )}

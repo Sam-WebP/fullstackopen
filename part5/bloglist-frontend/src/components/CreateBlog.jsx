@@ -1,6 +1,6 @@
 import React from 'react'
 
-const CreateBlog = ({ createBlog, newBlog, handleInputChange }) => {
+const CreateBlog = ({ createBlog, newBlog, handleInputChange, handleCancel }) => {
     return (
       <>
         <h2>Create New</h2>

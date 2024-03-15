@@ -1,36 +1,57 @@
-import React from 'react'
-import MessagePopup from './MessagePopup'
-import Logout from './Logout'
-import CreateBlog from './CreateBlog'
-import Blog from './Blog'
+import React from 'react';
+import CreateBlog from './CreateBlog';
 
 const AllBlogs = ({
-  blogs, username, handleLogout, createBlog, newBlog, handleInputChange, alertMessage, alertColor
+  blogs,
+  createBlogVisible,
+  setCreateBlogVisible,
+  handleLogout,
+  addBlog,
+  newBlog,
+  setNewBlog,
+  alertMessage,
+  alertColor
 }) => {
-  const [isCreating, setIsCreating] = useState(false)
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setNewBlog({ ...newBlog, [name]: value });
+  };
 
-  const showCreateBlog = () => setIsCreating(true)
-  const hideCreateBlog = () => setIsCreating(false)
-
-  return (
-    <>
-      <h1>Blogs</h1>
-      {username} logged in <button onClick={handleLogout}>logout</button>
-      <button onClick={showCreateBlog} style={{ display: isCreating ? 'none' : 'block' }}>
-        new blog
-      </button>
-      {isCreating && 
-        <CreateBlog 
-          createBlog={(event) => { createBlog(event); hideCreateBlog(); }} 
-          newBlog={newBlog} 
-          handleInputChange={handleInputChange} 
-          handleCancel={hideCreateBlog} 
-        />
-      }
-      {/* List blogs here */}
-      {alertMessage && <div style={{ color: alertColor }}>{alertMessage}</div>}
-    </>
-  )
-}
-
-export default AllBlogs
+  const handleCreateBlog = (event) => {
+    event.preventDefault();
+    addBlog(newBlog);
+    setNewBlog({ title:
+      '', author: '', url: '' });
+    };
+  
+    const handleCancel = () => {
+      setCreateBlogVisible(false);
+    };
+  
+    return (
+      <>
+        <h1>Blogs</h1>
+        {blogs.map(blog =>
+          <div key={blog.id}>{blog.title}</div>
+        )}
+        <div>
+          {alertMessage && <div style={{ color: alertColor }}>{alertMessage}</div>}
+        </div>
+        <button onClick={() => setCreateBlogVisible(true)} style={{ display: createBlogVisible ? 'none' : 'block' }}>
+          new blog
+        </button>
+        {createBlogVisible && 
+          <CreateBlog 
+            createBlog={handleCreateBlog} 
+            newBlog={newBlog} 
+            handleInputChange={handleInputChange}
+            handleCancel={handleCancel}
+          />
+        }
+        <button onClick={handleLogout}>logout</button>
+      </>
+    );
+  };
+  
+  export default AllBlogs;
+  
