@@ -29,7 +29,8 @@ const CreateBlog = ({ createBlog, newBlog, handleInputChange }) => {
               onChange={handleInputChange}
             />
           </div>
-          <button type="submit">Add Blog</button>
+          <button type="submit">Create</button>
+          <button type="button" onClick={handleCancel}>Cancel</button>
         </form>
        </> 
     )
