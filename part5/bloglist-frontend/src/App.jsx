@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import blogService from './services/blogs'
-import loginService from './services/login'
 import Login from './components/Login'
-import AllBlogs from './components/AllBlogs'
+import DisplayBlogs from './components/DisplayBlogs'
 import React from 'react'
 
 const App = () => {
@@ -10,10 +9,9 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
-  const [alertMessage, setAlertMessage] = useState(null)
   const [alertColor, setAlertColor] = useState(null)
   const [createBlogVisible, setCreateBlogVisible] = useState(false)
+  const [alertMessage, setAlertMessage] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs => setBlogs(blogs))
@@ -43,23 +41,8 @@ const App = () => {
     }
   }, [alertMessage])
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
-    try {
-      const confirmUser = await loginService.loginUser(username, password)
-      console.log("🚀 ~ handleLogin ~ confirmUser:", confirmUser)
-      window.localStorage.setItem('loggedInUser', JSON.stringify(confirmUser))
-      blogService.setToken(confirmUser.token)
-      setUser(confirmUser)
-      setUsername(confirmUser.username)
-      setPassword('')
-      setAlertMessage(null)
-    } catch (error) {
-      console.error("Login failed:", error)
-      setAlertColor('red')
-      setAlertMessage('wrong username or password')
-      return
-    }
+  const handleCancel = () => {
+    setCreateBlogVisible(false)
   }
 
   const handleLogout = (event) => {
@@ -70,25 +53,6 @@ const App = () => {
     console.log("Account Logged Out")
   }
 
-  const createBlog = async (event) => {
-    event.preventDefault()
-    if (user && user.token) {
-      const createdBlog = await blogService.create(newBlog, user.token)
-      console.log('Blog added:', createdBlog)
-      setAlertMessage(`a new blog ${createdBlog.title} by ${createdBlog.author} added`)
-      setAlertColor('green')
-      setNewBlog({ title: '', author: '', url: '' })
-      setBlogs([...blogs, createdBlog])
-    } else {
-      console.error('Token is missing. User must be logged in to create a blog.')
-    }
-  }
-
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setNewBlog({ ...newBlog, [name]: value });
-  }
-
   return (
     <div>
 
@@ -96,28 +60,39 @@ const App = () => {
      <Login
        username={username}
        password={password}
-       handleLogin={handleLogin}
        setUsername={setUsername}
        setPassword={setPassword}
        alertMessage={alertMessage}
        alertColor={alertColor}
+       setUser={setUser}
+       setAlertColor={setAlertColor}
      />
     ) : (
       <>
-        <AllBlogs 
+        <DisplayBlogs 
           blogs={blogs} 
-          username={username} 
-          handleLogout={handleLogout}
-          createBlog={createBlog}
-          newBlog={newBlog}
-          handleInputChange={handleInputChange}
           alertMessage={alertMessage}
           alertColor={alertColor}
-          createBlogVisible={createBlogVisible}
-          setCreateBlogVisible={setCreateBlogVisible}
         />
       </>
     )}
+    <button onClick={() => setCreateBlogVisible(true)} style={{ display: createBlogVisible ? 'none' : 'block' }}>
+      new blog
+    </button>
+    {createBlogVisible && 
+      <CreateBlog 
+        newBlog={newBlog} 
+        handleCancel={handleCancel}
+        setNewBlog={setNewBlog}
+        setAlertMessage={setAlertMessage}
+        setAlertColor={setAlertColor}
+        setBlogs={setBlogs}
+        user={user}
+        blogService={blogService}
+        blogs={blogs} 
+      />
+    }
+    <button onClick={handleLogout}>logout</button>
     </div>
   )
 }
