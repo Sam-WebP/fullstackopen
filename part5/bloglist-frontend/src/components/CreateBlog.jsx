@@ -1,16 +1,18 @@
 import React from 'react'
+import { useState } from 'react'
 
-const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
+
 
 const CreateBlog = ({ 
-  newBlog, 
   handleCancel,
   setAlertColor,
   setBlogs,
   user,
   blogService,
-  blogs
+  blogs,
+  setAlertMessage
 }) => {
+  const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
 
   const handleInputChange = (event) => {
     const { name, value } = event.target

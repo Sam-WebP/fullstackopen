@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import blogService from './services/blogs'
 import Login from './components/Login'
 import DisplayBlogs from './components/DisplayBlogs'
+import CreateBlog from './components/CreateBlog'
 import React from 'react'
 
 const App = () => {
@@ -11,6 +12,7 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [alertColor, setAlertColor] = useState(null)
   const [createBlogVisible, setCreateBlogVisible] = useState(false)
+  const [LogoutVisible, setLogoutVisible] = useState(false)
   const [alertMessage, setAlertMessage] = useState(null)
 
   useEffect(() => {
@@ -51,6 +53,8 @@ const App = () => {
     blogService.setToken(null)
     setUser(null)
     console.log("Account Logged Out")
+    setCreateBlogVisible(false)
+    setLogoutVisible(false)
   }
 
   return (
@@ -63,9 +67,12 @@ const App = () => {
        setUsername={setUsername}
        setPassword={setPassword}
        alertMessage={alertMessage}
+       setAlertMessage={setAlertMessage}
        alertColor={alertColor}
        setUser={setUser}
        setAlertColor={setAlertColor}
+       setLogoutVisible={setLogoutVisible}
+       setCreateBlogVisible={setCreateBlogVisible}
      />
     ) : (
       <>
@@ -76,23 +83,30 @@ const App = () => {
         />
       </>
     )}
-    <button onClick={() => setCreateBlogVisible(true)} style={{ display: createBlogVisible ? 'none' : 'block' }}>
+
+    {
+    !createBlogVisible && 
+    LogoutVisible &&
+      <button onClick={() => setCreateBlogVisible(true)} style={{ display: createBlogVisible ? 'none' : 'block' }}>
       new blog
     </button>
+    }
+
     {createBlogVisible && 
       <CreateBlog 
-        newBlog={newBlog} 
         handleCancel={handleCancel}
-        setNewBlog={setNewBlog}
         setAlertMessage={setAlertMessage}
         setAlertColor={setAlertColor}
         setBlogs={setBlogs}
         user={user}
         blogService={blogService}
-        blogs={blogs} 
+        blogs={blogs}
       />
     }
-    <button onClick={handleLogout}>logout</button>
+
+    {LogoutVisible && 
+      <button onClick={handleLogout}>logout</button>
+    }
     </div>
   )
 }

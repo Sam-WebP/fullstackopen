@@ -12,7 +12,9 @@ const Login = ({
   alertMessage,
   setUser,
   setAlertMessage,
-  setAlertColor
+  setAlertColor,
+  setLogoutVisible,
+  setCreateBlogVisible
   }) => {
 
   const handleLogin = async (event) => {
@@ -25,6 +27,8 @@ const Login = ({
       setUsername(confirmUser.username)
       setPassword('')
       setAlertMessage(null)
+      setLogoutVisible(true)
+      setCreateBlogVisible(false)
     } catch (error) {
       console.error("Login failed:", error)
       setAlertColor('red')
