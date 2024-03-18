@@ -11,9 +11,9 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [alertColor, setAlertColor] = useState(null)
-  const [createBlogVisible, setCreateBlogVisible] = useState(false)
-  const [LogoutVisible, setLogoutVisible] = useState(false)
   const [alertMessage, setAlertMessage] = useState(null)
+  const [createBlogVisible, setCreateBlogVisible] = useState(false)
+  const [userLoggedIn, setUserLoggedIn] = useState(window.localStorage.getItem('loggedInUser'))
 
   useEffect(() => {
     blogService.getAll().then(blogs => setBlogs(blogs))
@@ -54,59 +54,56 @@ const App = () => {
     setUser(null)
     console.log("Account Logged Out")
     setCreateBlogVisible(false)
-    setLogoutVisible(false)
+    setUserLoggedIn(false)
   }
 
   return (
     <div>
+      <div style={userLoggedIn ? { display : 'none' } : {}}>
+        <Login
+          username={username}
+          password={password}
+          setUsername={setUsername}
+          setPassword={setPassword}
+          alertMessage={alertMessage}
+          setAlertMessage={setAlertMessage}
+          alertColor={alertColor}
+          setUser={setUser}
+          setAlertColor={setAlertColor}
+          setUserLoggedIn={setUserLoggedIn}
+        /> 
+      </div>
 
-    {user === null ? (
-     <Login
-       username={username}
-       password={password}
-       setUsername={setUsername}
-       setPassword={setPassword}
-       alertMessage={alertMessage}
-       setAlertMessage={setAlertMessage}
-       alertColor={alertColor}
-       setUser={setUser}
-       setAlertColor={setAlertColor}
-       setLogoutVisible={setLogoutVisible}
-       setCreateBlogVisible={setCreateBlogVisible}
-     />
-    ) : (
-      <>
+      <div style={!userLoggedIn ? { display : 'none' } : {}}>
         <DisplayBlogs 
           blogs={blogs} 
           alertMessage={alertMessage}
           alertColor={alertColor}
         />
-      </>
-    )}
+      </div>
 
-    {
-    !createBlogVisible && 
-    LogoutVisible &&
-      <button onClick={() => setCreateBlogVisible(true)} style={{ display: createBlogVisible ? 'none' : 'block' }}>
-      new blog
-    </button>
-    }
+      <div style={createBlogVisible || !userLoggedIn ? { display: 'none' } : {}}>
+        <button onClick={() => setCreateBlogVisible(true)}>
+          new blog
+        </button>
+      </div>
+      
+      <div style={!createBlogVisible ? { display : 'none' } : {}}>
+        <CreateBlog 
+          handleCancel={handleCancel}
+          setAlertMessage={setAlertMessage}
+          setAlertColor={setAlertColor}
+          setBlogs={setBlogs}
+          user={user}
+          blogService={blogService}
+          blogs={blogs}
+        />
+      </div>
 
-    {createBlogVisible && 
-      <CreateBlog 
-        handleCancel={handleCancel}
-        setAlertMessage={setAlertMessage}
-        setAlertColor={setAlertColor}
-        setBlogs={setBlogs}
-        user={user}
-        blogService={blogService}
-        blogs={blogs}
-      />
-    }
-
-    {LogoutVisible && 
-      <button onClick={handleLogout}>logout</button>
-    }
+      <div style={!userLoggedIn ? { display : 'none' } : {}}>
+        <button onClick={handleLogout}>logout</button>
+      </div>
+    
     </div>
   )
 }
