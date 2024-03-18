@@ -8,9 +8,10 @@ const DisplayBlogs = ({
 
 return (
   <>
-    <h1>Blogs</h1>
     {blogs.map(blog =>
-      <div key={blog.id}>{blog.title}</div>
+      <div key={blog.id}>
+        {blog.title} {blog.author} <button>view</button>
+      </div>
     )}
     <div>
       {alertMessage && <div style={{ color: alertColor }}>{alertMessage}</div>}

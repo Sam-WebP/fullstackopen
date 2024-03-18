@@ -59,7 +59,8 @@ const App = () => {
 
   return (
     <div>
-      <div style={userLoggedIn ? { display : 'none' } : {}}>
+
+      {!userLoggedIn && (
         <Login
           username={username}
           password={password}
@@ -71,39 +72,40 @@ const App = () => {
           setUser={setUser}
           setAlertColor={setAlertColor}
           setUserLoggedIn={setUserLoggedIn}
-        /> 
-      </div>
-
-      <div style={!userLoggedIn ? { display : 'none' } : {}}>
-        <DisplayBlogs 
-          blogs={blogs} 
-          alertMessage={alertMessage}
-          alertColor={alertColor}
         />
-      </div>
+      )}
 
-      <div style={createBlogVisible || !userLoggedIn ? { display: 'none' } : {}}>
-        <button onClick={() => setCreateBlogVisible(true)}>
-          new blog
-        </button>
-      </div>
-      
-      <div style={!createBlogVisible ? { display : 'none' } : {}}>
-        <CreateBlog 
-          handleCancel={handleCancel}
-          setAlertMessage={setAlertMessage}
-          setAlertColor={setAlertColor}
-          setBlogs={setBlogs}
-          user={user}
-          blogService={blogService}
-          blogs={blogs}
-        />
-      </div>
+      {userLoggedIn && (
+        <>
+          <h1>Blogs</h1>
+          <p>{username} is logged in <button onClick={handleLogout}>logout</button></p>
 
-      <div style={!userLoggedIn ? { display : 'none' } : {}}>
-        <button onClick={handleLogout}>logout</button>
-      </div>
-    
+          {createBlogVisible && (
+            <CreateBlog
+              handleCancel={handleCancel}
+              setAlertMessage={setAlertMessage}
+              setAlertColor={setAlertColor}
+              setBlogs={setBlogs}
+              user={user}
+              blogService={blogService}
+              blogs={blogs}
+            />
+          )}
+
+          {!createBlogVisible && (
+            <button onClick={() => setCreateBlogVisible(true)}>
+              new blog
+            </button>
+          )}
+
+          <DisplayBlogs
+            blogs={blogs}
+            alertMessage={alertMessage}
+            alertColor={alertColor}
+          />
+        </>
+      )}
+
     </div>
   )
 }
