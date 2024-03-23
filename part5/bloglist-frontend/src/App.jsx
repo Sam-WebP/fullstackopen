@@ -16,12 +16,14 @@ const App = () => {
   const [userLoggedIn, setUserLoggedIn] = useState(window.localStorage.getItem('loggedInUser'))
 
   useEffect(() => {
-    try {
-      blogService.getAll().then(blogs => setBlogs(blogs))
-    } catch (error) {
-      console.log('Error getting all blogs', error)
-    }
-    
+    blogService.getAll()
+      .then(blogs => {
+        // console.log(blogs) // Check the structure here
+        setBlogs(blogs)
+      })
+      .catch(error => {
+        console.log('Error getting all blogs', error)
+      })
   }, [])
   
   useEffect(() => {

@@ -6,6 +6,7 @@ const BlogPost = ({ blog, blogService }) => {
 
   const toggleView = () => {
     setButtonText(buttonText === 'view' ? 'hide' : 'view')
+    console.log("🚀 ~ toggleView ~ blog:", blog)
   }
 
   const blogLiked = async (event) => {
@@ -45,7 +46,12 @@ const BlogPost = ({ blog, blogService }) => {
             Likes {blogLikes} <button onClick={blogLiked}>like</button>
           </div>
           <div>
-            {blog.author}
+            {blog.user ? (
+              <div>Posted by {blog.user.username}</div>
+            ) : (
+              <div>Posted by Anonymous</div>
+            )}
+
           </div>
         </div>
       )}
