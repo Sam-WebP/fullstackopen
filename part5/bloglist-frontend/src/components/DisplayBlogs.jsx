@@ -11,7 +11,7 @@ const DisplayBlogs = ({
 
   return (
     <>
-      {blogs.map(blog => <BlogPost key={blog.id} blog={blog} blogService={blogService}/>)}
+      {blogs.sort((a, b) => b.likes - a.likes).map(blog => <BlogPost key={blog.id} blog={blog} blogService={blogService}/>)}
       <div>
         {alertMessage && <div style={{ color: alertColor }}>{alertMessage}</div>}
       </div>
