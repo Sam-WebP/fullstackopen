@@ -16,7 +16,12 @@ const App = () => {
   const [userLoggedIn, setUserLoggedIn] = useState(window.localStorage.getItem('loggedInUser'))
 
   useEffect(() => {
-    blogService.getAll().then(blogs => setBlogs(blogs))
+    try {
+      blogService.getAll().then(blogs => setBlogs(blogs))
+    } catch (error) {
+      console.log('Error getting all blogs', error)
+    }
+    
   }, [])
   
   useEffect(() => {
@@ -102,6 +107,7 @@ const App = () => {
             blogs={blogs}
             alertMessage={alertMessage}
             alertColor={alertColor}
+            blogService={blogService}
           />
         </>
       )}

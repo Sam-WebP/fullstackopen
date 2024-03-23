@@ -1,10 +1,27 @@
 import React, { useState } from 'react'
 
-const BlogPost = ({ blog }) => {
+const BlogPost = ({ blog, blogService }) => {
   const [buttonText, setButtonText] = useState('view')
+  const [blogLikes, setBlogLikes] = useState(blog.likes)
 
   const toggleView = () => {
     setButtonText(buttonText === 'view' ? 'hide' : 'view')
+  }
+
+  const blogLiked = async (event) => {
+    try {
+      event.preventDefault()
+      const newObject = {
+        likes: blog.likes + 1,
+        author: blog.author,
+        title: blog.title,
+        url: blog.url,
+      }
+      const updatedBlog = await blogService.update(blog.id, newObject)
+      setBlogLikes(blog.likes + 1)
+    } catch (error) {
+      console.error('Error updating blog:', error)
+    }
   }
 
   const blogStyle = {
@@ -25,7 +42,7 @@ const BlogPost = ({ blog }) => {
             {blog.url}
           </div>
           <div>
-            Likes {blog.likes} <button>like</button>
+            Likes {blogLikes} <button onClick={blogLiked}>like</button>
           </div>
           <div>
             {blog.author}

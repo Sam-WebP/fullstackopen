@@ -6,11 +6,12 @@ const DisplayBlogs = ({
   blogs,
   alertMessage,
   alertColor,
+  blogService
   }) => {
 
   return (
     <>
-      {blogs.map(blog => <BlogPost key={blog.id} blog={blog} />)}
+      {blogs.map(blog => <BlogPost key={blog.id} blog={blog} blogService={blogService}/>)}
       <div>
         {alertMessage && <div style={{ color: alertColor }}>{alertMessage}</div>}
       </div>
