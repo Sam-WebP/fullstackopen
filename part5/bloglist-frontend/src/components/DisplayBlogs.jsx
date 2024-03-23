@@ -1,5 +1,4 @@
 import React from 'react'
-import { useState } from 'react'
 import BlogPost from './BlogPost'
 
 const DisplayBlogs = ({
